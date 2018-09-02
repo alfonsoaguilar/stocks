@@ -1,8 +1,8 @@
 #' Sortino Ratio
 #' 
 #' Calculates Sortino ratio from vector of gains or prices. The formula is: 
-#' \code{(mean(gains) - rf) / sd(gains[gains < 0])}, where \code{rf} is some 
-#' risk-free rate of return.
+#' \code{(mean(gains) - rf) / sd(gains[gains < rf])}, where \code{rf} is some 
+#' (daily) minimum acceptable rate of return (eg. risk-free rate of return).
 #' 
 #' 
 #' @inheritParams metrics
@@ -18,7 +18,7 @@
 #' set.seed(123)
 #' stock.gains <- rnorm(252 * 5, 0.0005, 0.01)
 #' 
-#' # Calculate Sortino ratio using risk-free return of 0
+#' # Calculate Sortino ratio using minimum acceptable return of 0
 #' sortino(stock.gains)
 #' 
 #' 
@@ -34,10 +34,10 @@ sortino <- function(gains = NULL,
   
   # Calculate and return Sortino ratio
   if (is.vector(gains)) {
-    sortino.ratio <- (mean(gains) - rf) / sd(gains[gains < 0])
+    sortino.ratio <- (mean(gains) - rf) / sd(gains[gains < rf])
   } else {
     means <- apply(gains, 2, mean)
-    sds <- apply(gains, 2, function(x) sd(x[x < 0]))
+    sds <- apply(gains, 2, function(x) sd(x[x < rf]))
     sortino.ratio <- (means - rf) / sds
   }
   
